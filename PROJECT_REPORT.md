@@ -79,3 +79,4 @@ This command:
 - Local backend connects to MongoDB and runs on port `5001`
 - Frontend build compiles successfully
 - Project is ready for final deployment and supervisor sharing
+Made by Amna and Abeera.
