@@ -21,6 +21,36 @@ const normalizeStatus = (status) => {
   return 'pending';
 };
 
+const getBreakdownTotal = (breakdown = {}) => {
+  const transportation = Number(breakdown.transportation) || 0;
+  const accommodation = Number(breakdown.accommodation) || 0;
+  const food = Number(breakdown.food) || 0;
+  const activities = Number(breakdown.activities) || 0;
+  const miscellaneous = Number(breakdown.miscellaneous) || 0;
+
+  return (
+    transportation +
+    accommodation +
+    food +
+    activities +
+    miscellaneous
+  );
+};
+
+const isPastDateOnly = (dateValue) => {
+  if (!dateValue) return false;
+  const parsed = new Date(dateValue);
+  if (Number.isNaN(parsed.getTime())) return false;
+
+  const tripDate = new Date(parsed);
+  tripDate.setHours(0, 0, 0, 0);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return tripDate < today;
+};
+
 // Resolve Gemini API key: env first, then .env file, then database (Admin Panel)
 const resolveGeminiApiKey = async () => {
   let apiKey = process.env.AI_API_KEY?.trim();
@@ -598,10 +628,16 @@ const calculateBudget = async (destination, numberOfMembers, days, season) => {
 
 exports.calculateBudget = async (req, res) => {
   try {
-    const { destination, numberOfMembers, days, season, useRealTimePricing = false } = req.body;
+    const { destination, numberOfMembers, days, season, useRealTimePricing = false, startDate } = req.body;
 
     if (!destination || !numberOfMembers || !days || !season) {
       return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    if (startDate && isPastDateOnly(startDate)) {
+      return res.status(400).json({
+        message: 'Past date is not allowed. Please select today or a future date.'
+      });
     }
 
     let breakdown;
@@ -682,6 +718,7 @@ exports.calculateBudget = async (req, res) => {
       season,
       breakdown,
       currency: 'PKR',
+      serverCalculated: true,
       aiPowered: usedAI,
       realTimePricing: usedRealTimePricing,
       recommendations: aiRecommendations,
@@ -695,7 +732,25 @@ exports.calculateBudget = async (req, res) => {
 
 exports.saveBudget = async (req, res) => {
   try {
-    const { destination, numberOfMembers, days, season, breakdown, total, isManual, status, startDate } = req.body;
+    const { destination, numberOfMembers, days, season, breakdown, isManual, status, startDate } = req.body;
+
+    if (startDate && isPastDateOnly(startDate)) {
+      return res.status(400).json({
+        message: 'Trip start date cannot be in the past'
+      });
+    }
+
+    let finalBreakdown = breakdown;
+    if (!finalBreakdown || typeof finalBreakdown !== 'object') {
+      finalBreakdown = await calculateBudget(
+        destination,
+        Number(numberOfMembers),
+        Number(days),
+        normalizeSeason(season)
+      );
+    }
+
+    const serverCalculatedTotal = Math.round(getBreakdownTotal(finalBreakdown));
 
     const budget = new Budget({
       userId: req.user._id,
@@ -703,8 +758,8 @@ exports.saveBudget = async (req, res) => {
       numberOfMembers,
       days,
       season: normalizeSeason(season),
-      breakdown,
-      total,
+      breakdown: finalBreakdown,
+      total: serverCalculatedTotal,
       isManual: isManual || false,
       status: normalizeStatus(status),
       startDate: startDate ? new Date(startDate) : undefined

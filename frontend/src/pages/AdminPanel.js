@@ -895,7 +895,7 @@ const AdminPanel = () => {
       <div className="admin-sidebar">
         <div className="sidebar-header">
           <div className="admin-logo">
-            <span className="logo-icon">🌍</span>
+            <span className="logo-icon"></span>
             <h2>TravelBuddy Admin</h2>
           </div>
         </div>

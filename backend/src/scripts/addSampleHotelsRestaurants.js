@@ -57,7 +57,6 @@ async function addSampleData() {
         amenities: ['WiFi', 'Pool', 'Gym', 'Spa', 'Restaurant', 'Parking'],
         contactNumber: '+92-21-12345678',
         email: 'info@marriottkarachi.com',
-        bookingLink: 'https://www.marriott.com',
         images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800']
       },
       {
@@ -71,7 +70,7 @@ async function addSampleData() {
         amenities: ['WiFi', 'Pool', 'Gym', 'Business Center', 'Restaurant'],
         contactNumber: '+92-21-11111111',
         email: 'info@pchotels.com',
-        bookingLink: 'https://www.pchotels.com',
+        
         images: ['https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800']
       },
       {
@@ -85,7 +84,7 @@ async function addSampleData() {
         amenities: ['WiFi', 'Pool', 'Gym', 'Restaurant', 'Room Service'],
         contactNumber: '+92-21-22222222',
         email: 'info@avari.com',
-        bookingLink: 'https://www.avari.com',
+        b
         images: ['https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800']
       }
     ];
@@ -102,7 +101,7 @@ async function addSampleData() {
         cuisine: ['Pakistani', 'Seafood', 'BBQ'],
         priceRange: { min: 20, max: 80, currency: 'USD' },
         contactNumber: '+92-21-33333333',
-        bookingLink: 'https://www.kolachi.com',
+
         images: ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800']
       },
       {
@@ -127,7 +126,7 @@ async function addSampleData() {
         cuisine: ['French', 'Cafe', 'Bakery'],
         priceRange: { min: 15, max: 60, currency: 'USD' },
         contactNumber: '+92-21-55555555',
-        bookingLink: 'https://www.cafeflo.com',
+ 
         images: ['https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800']
       },
       {
@@ -140,7 +139,7 @@ async function addSampleData() {
         cuisine: ['International', 'Fusion', 'Italian'],
         priceRange: { min: 25, max: 100, currency: 'USD' },
         contactNumber: '+92-21-66666666',
-        bookingLink: 'https://www.xanders.com',
+
         images: ['https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800']
       }
     ];

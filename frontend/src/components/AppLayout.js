@@ -192,7 +192,7 @@ const AppLayout = () => {
       <header className="goland-header">
         <div className="header-left">
           <div className="logo" onClick={() => navigate('/app/dashboard')}>
-            <span className="logo-icon" aria-hidden="true">🚌</span>
+            <span className="logo-icon" aria-hidden="false"></span>
             <span>Smart Travel</span>
           </div>
           <h1 className="page-title">{pageTitle}</h1>

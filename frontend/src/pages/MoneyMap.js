@@ -3,6 +3,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import './MoneyMap.css';
 
+const getTodayLocalISO = () => {
+  const today = new Date();
+  const tzOffsetMs = today.getTimezoneOffset() * 60000;
+  return new Date(today.getTime() - tzOffsetMs).toISOString().split('T')[0];
+};
+
 const MoneyMap = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -89,6 +95,11 @@ const MoneyMap = () => {
 
   const handleCalculate = async (e) => {
     e.preventDefault();
+
+    if (tripStartDate && tripStartDate < getTodayLocalISO()) {
+      setCalcError('Past date is not allowed. Please select today or a future date.');
+      return;
+    }
     
     // If manual mode, use manual values
     if (calculationMode === 'manual') {
@@ -108,13 +119,15 @@ const MoneyMap = () => {
     }
 
     setLoading(true);
+    setCalcError(null);
     try {
       const response = await api.post('/money-map/calculate', {
         destination: formData.destination,
         numberOfMembers: parseInt(formData.numberOfTravelers),
         days: parseInt(formData.tripDuration),
         season: formData.travelSeason,
-        useRealTimePricing: calculationMode === 'realtime'
+        useRealTimePricing: calculationMode === 'realtime',
+        startDate: tripStartDate || undefined
       });
       setResult(response.data);
       setCalcError(null);
@@ -329,6 +342,7 @@ const MoneyMap = () => {
                   <label>When (Trip Start Date)</label>
                   <input
                     type="date"
+                    min={getTodayLocalISO()}
                     value={tripStartDate}
                     onChange={(e) => setTripStartDate(e.target.value)}
                   />
